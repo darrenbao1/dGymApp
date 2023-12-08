@@ -27,7 +27,7 @@ export default function AuthForm() {
 					theme="dark"
 					showLinks={false}
 					providers={["twitter", "google"]}
-					redirectTo="http://localhost:3000/auth/callback"
+					redirectTo="https://d-gym-app.vercel.app/auth/callback"
 					socialLayout="horizontal"
 				/>
 			</div>
