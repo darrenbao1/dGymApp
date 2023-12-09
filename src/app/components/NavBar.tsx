@@ -5,6 +5,7 @@ import { FaDumbbell } from "react-icons/fa";
 import { FaRunning } from "react-icons/fa";
 import { usePathname } from "next/navigation";
 import { FaWeightScale } from "react-icons/fa6";
+import { VscAccount } from "react-icons/vsc";
 interface LinkObject {
 	href: string;
 	text: string;
@@ -16,23 +17,23 @@ export default function NavBar() {
 	const links: LinkObject[] = [
 		{
 			href: "/protected/workout",
-			text: "workouts",
+			text: "Workout",
 			icon: <FaDumbbell />,
 		},
 		{
 			href: "/protected/cardio",
-			text: "cardio",
+			text: "Cardio",
 			icon: <FaRunning />,
 		},
 		{
 			href: "/protected/weight",
-			text: "weight",
+			text: "Weight",
 			icon: <FaWeightScale />,
 		},
 		{
-			href: "/settings",
-			text: "settings",
-			icon: <BsGearFill />,
+			href: "/protected/account",
+			text: "Account",
+			icon: <VscAccount />,
 		},
 	];
 

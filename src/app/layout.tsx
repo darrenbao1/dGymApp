@@ -30,10 +30,7 @@ export default function RootLayout({
 		<html
 			lang="en"
 			className={`${inter.variable} ${raleway.variable} font-sans`}>
-			<body>
-				{children}
-				<NavBar />
-			</body>
+			<body>{children}</body>
 		</html>
 	);
 }
