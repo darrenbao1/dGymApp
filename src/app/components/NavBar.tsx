@@ -15,17 +15,17 @@ export default function NavBar() {
 	const pathname = usePathname();
 	const links: LinkObject[] = [
 		{
-			href: "/workout",
+			href: "/protected/workout",
 			text: "workouts",
 			icon: <FaDumbbell />,
 		},
 		{
-			href: "/cardio",
+			href: "/protected/cardio",
 			text: "cardio",
 			icon: <FaRunning />,
 		},
 		{
-			href: "/weight",
+			href: "/protected/weight",
 			text: "weight",
 			icon: <FaWeightScale />,
 		},

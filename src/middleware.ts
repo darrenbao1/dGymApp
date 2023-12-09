@@ -19,10 +19,13 @@ export async function middleware(req: NextRequest) {
 	if (!user && req.nextUrl.pathname !== "/") {
 		return NextResponse.redirect(new URL("/", req.url));
 	}
+	if (req.nextUrl.pathname === "/workout") {
+		return NextResponse.redirect(new URL("/", req.url));
+	}
 
 	return res;
 }
 
 export const config = {
-	matcher: ["/", "/account"],
+	matcher: ["/", "/account", "/protected/:path*"],
 };
