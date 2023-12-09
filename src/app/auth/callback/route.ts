@@ -10,6 +10,7 @@ export async function GET(req: NextRequest) {
 	if (code) {
 		await supabase.auth.exchangeCodeForSession(code);
 	}
-
-	return NextResponse.redirect(new URL("/account", req.url));
+	const url = req.nextUrl.clone();
+	url.pathname = "/account";
+	return NextResponse.redirect(url);
 }
