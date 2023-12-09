@@ -28,7 +28,7 @@ export default function AuthForm() {
 					showLinks={false}
 					providers={["twitter", "google"]}
 					socialLayout="horizontal"
-					redirectTo={`${process.env.NEXT_PUBLIC_BASE_URL}/account`}
+					redirectTo={`${process.env.NEXT_PUBLIC_BASE_URL}/auth/callback`}
 				/>
 			</div>
 		</div>
