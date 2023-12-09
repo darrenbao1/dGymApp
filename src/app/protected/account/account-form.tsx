@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
-import { Database } from "../../../types/supabase";
+import { Database } from "../../../../types/supabase";
 import {
 	Session,
 	createClientComponentClient,
@@ -77,7 +77,7 @@ export default function AccountForm({ session }: { session: Session | null }) {
 	}
 
 	return (
-		<div className="form-widget">
+		<div className="container bg-gray-900 rounded-xl p-6 shadow-xxl h-full">
 			<div>
 				<label htmlFor="email">Email</label>
 				<input id="email" type="text" value={session?.user.email} disabled />
@@ -89,6 +89,8 @@ export default function AccountForm({ session }: { session: Session | null }) {
 					type="text"
 					value={fullname || ""}
 					onChange={(e) => setFullname(e.target.value)}
+					className="primary-input"
+					placeholder="Full Name"
 				/>
 			</div>
 			<div>
@@ -97,7 +99,9 @@ export default function AccountForm({ session }: { session: Session | null }) {
 					id="username"
 					type="text"
 					value={username || ""}
+					className="primary-input"
 					onChange={(e) => setUsername(e.target.value)}
+					placeholder="Username"
 				/>
 			</div>
 			<div>
@@ -107,12 +111,14 @@ export default function AccountForm({ session }: { session: Session | null }) {
 					type="url"
 					value={website || ""}
 					onChange={(e) => setWebsite(e.target.value)}
+					className="primary-input"
+					placeholder="Website"
 				/>
 			</div>
 
 			<div>
 				<button
-					className="button primary block"
+					className="primary-button"
 					onClick={() =>
 						updateProfile({ fullname, username, website, avatar_url })
 					}
@@ -123,8 +129,8 @@ export default function AccountForm({ session }: { session: Session | null }) {
 
 			<div>
 				<form action="/auth/signout" method="post">
-					<button className="button block" type="submit">
-						Sign out
+					<button type="submit" className="secondary-button">
+						Sign Out
 					</button>
 				</form>
 			</div>

@@ -20,13 +20,24 @@ export default function AuthForm() {
 								colors: {
 									brand: "#2D9CDB",
 									brandAccent: "#2D9CDB",
+
+									brandButtonText: "white",
+									dividerBackground: "#2e2e2e",
+									defaultButtonBackground: "#2e2e2e",
+									defaultButtonBackgroundHover: "gray",
+									defaultButtonBorder: "#2e2e2e",
+									inputPlaceholder: "gray",
+									inputLabelText: "gray",
+									inputText: "white",
+									inputBackground: "#2e2e2e",
+									inputBorder: "#2e2e2e",
 								},
 							},
 						},
 					}}
-					theme="dark"
+					theme="light"
 					showLinks={false}
-					providers={["twitter", "google"]}
+					providers={["twitter"]}
 					socialLayout="horizontal"
 					redirectTo={`${process.env.NEXT_PUBLIC_BASE_URL}/auth/callback`}
 				/>
