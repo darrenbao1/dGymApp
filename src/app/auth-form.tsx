@@ -28,7 +28,7 @@ export default function AuthForm() {
 					showLinks={false}
 					providers={["twitter", "google"]}
 					socialLayout="horizontal"
-					redirectTo="https://d-gym-app.vercel.app/account"
+					redirectTo={`${process.env.NEXT_PUBLIC_BASE_URL}/account`}
 				/>
 			</div>
 		</div>
