@@ -14,7 +14,7 @@
      text-white  text-xs font-bold;
 	}
 	.main-content {
-		@apply w-screen bg-slate-500 h-[calc(100vh-80px)] overflow-auto p-6;
+		@apply w-screen bg-slate-500 h-[calc(100vh-80px)] p-6 flex items-center fixed;
 	}
 	.primary-button {
 		@apply bg-primary text-white font-bold py-2 px-4 rounded-full items-center text-center hover:bg-primaryHover active:bg-primaryActive;
@@ -23,7 +23,13 @@
 		@apply bg-transparent text-blue-500 rounded-full border border-blue-500 py-2 px-4 items-center text-center hover:bg-primary hover:text-white active:bg-primaryActive active:text-white;
 	}
 	.primary-input {
-		@apply bg-black rounded-md border border-gray-700 text-white text-center placeholder-gray-500;
+		@apply bg-black rounded-md border border-gray-700 text-white text-center placeholder-gray-500 disabled:bg-gray-600;
+	}
+	.account-form-field {
+		@apply flex flex-col gap-1;
+	}
+	.account-form-label {
+		@apply text-white text-xs font-bold;
 	}
 }
 

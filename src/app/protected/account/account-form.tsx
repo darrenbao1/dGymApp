@@ -5,6 +5,7 @@ import {
 	Session,
 	createClientComponentClient,
 } from "@supabase/auth-helpers-nextjs";
+import Avatar from "./avatar";
 
 export default function AccountForm({ session }: { session: Session | null }) {
 	const supabase = createClientComponentClient<Database>();
@@ -77,13 +78,36 @@ export default function AccountForm({ session }: { session: Session | null }) {
 	}
 
 	return (
-		<div className="container bg-gray-900 rounded-xl p-6 shadow-xxl h-full">
-			<div>
-				<label htmlFor="email">Email</label>
-				<input id="email" type="text" value={session?.user.email} disabled />
+		<div className="container bg-gray-900 rounded-xl p-6 shadow-xxl flex flex-col items-center justify-center  overflow-auto h-full gap-2">
+			{user && (
+				<div>
+					<Avatar
+						uid={user!.id}
+						url={avatar_url}
+						size={100}
+						onUpload={(url) => {
+							setAvatarUrl(url);
+							updateProfile({ fullname, username, website, avatar_url: url });
+						}}
+					/>
+				</div>
+			)}
+			<div className="account-form-field">
+				<label htmlFor="email" className="account-form-label">
+					Email:
+				</label>
+				<input
+					id="email"
+					type="text"
+					value={session?.user.email}
+					className="primary-input"
+					disabled
+				/>
 			</div>
-			<div>
-				<label htmlFor="fullName">Full Name</label>
+			<div className="account-form-field">
+				<label htmlFor="fullName" className="account-form-label">
+					Full Name:
+				</label>
 				<input
 					id="fullName"
 					type="text"
@@ -93,8 +117,10 @@ export default function AccountForm({ session }: { session: Session | null }) {
 					placeholder="Full Name"
 				/>
 			</div>
-			<div>
-				<label htmlFor="username">Username</label>
+			<div className="account-form-field">
+				<label htmlFor="username" className="account-form-label">
+					Username:
+				</label>
 				<input
 					id="username"
 					type="text"
@@ -104,8 +130,10 @@ export default function AccountForm({ session }: { session: Session | null }) {
 					placeholder="Username"
 				/>
 			</div>
-			<div>
-				<label htmlFor="website">Website</label>
+			<div className="account-form-field">
+				<label htmlFor="website" className="account-form-label">
+					Website:
+				</label>
 				<input
 					id="website"
 					type="url"
