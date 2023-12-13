@@ -62,7 +62,7 @@ export default function WeightForm({ session }: { session: Session | null }) {
 	}
 
 	return (
-		<div className="container bg-gray-900 rounded-xl p-6 shadow-xxl flex flex-col overflow-auto h-full gap-2 items-center">
+		<div className="container bg-gray-900 rounded-xl p-6 shadow-xxl flex flex-col overflow-auto gap-2 items-center mb-1 mt-auto h-full">
 			<div className="account-form-field">
 				<label htmlFor="dateSelect" className="account-form-label">
 					Select Date:
