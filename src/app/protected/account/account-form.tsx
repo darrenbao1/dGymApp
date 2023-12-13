@@ -6,6 +6,7 @@ import {
 	createClientComponentClient,
 } from "@supabase/auth-helpers-nextjs";
 import Avatar from "./avatar";
+import { toast } from "react-hot-toast";
 
 export default function AccountForm({ session }: { session: Session | null }) {
 	const supabase = createClientComponentClient<Database>();
@@ -69,7 +70,8 @@ export default function AccountForm({ session }: { session: Session | null }) {
 				updated_at: new Date().toISOString(),
 			});
 			if (error) throw error;
-			alert("Profile updated!");
+			//alert("Profile updated!");
+			toast.success("Profile updated!");
 		} catch (error) {
 			alert("Error updating the data!");
 		} finally {
@@ -78,7 +80,7 @@ export default function AccountForm({ session }: { session: Session | null }) {
 	}
 
 	return (
-		<div className="container bg-gray-900 rounded-xl p-6 shadow-xxl flex flex-col items-center justify-center  overflow-auto h-full gap-2">
+		<div className="container bg-gray-900 rounded-xl p-6 shadow-xxl flex flex-col overflow-auto h-full gap-2">
 			{user && (
 				<div>
 					<Avatar
@@ -143,24 +145,25 @@ export default function AccountForm({ session }: { session: Session | null }) {
 					placeholder="Website"
 				/>
 			</div>
-
-			<div>
-				<button
-					className="primary-button"
-					onClick={() =>
-						updateProfile({ fullname, username, website, avatar_url })
-					}
-					disabled={loading}>
-					{loading ? "Loading ..." : "Update"}
-				</button>
-			</div>
-
-			<div>
-				<form action="/auth/signout" method="post">
-					<button type="submit" className="secondary-button">
-						Sign Out
+			<div className="flex items-center justify-center gap-2">
+				<div>
+					<button
+						className="primary-button"
+						onClick={() =>
+							updateProfile({ fullname, username, website, avatar_url })
+						}
+						disabled={loading}>
+						{loading ? "Loading ..." : "Update"}
 					</button>
-				</form>
+				</div>
+
+				<div>
+					<form action="/auth/signout" method="post">
+						<button type="submit" className="secondary-button">
+							Sign Out
+						</button>
+					</form>
+				</div>
 			</div>
 		</div>
 	);

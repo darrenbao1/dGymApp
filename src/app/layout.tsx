@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Raleway } from "next/font/google";
+import { Toaster } from "react-hot-toast";
 import "./globals.css";
-import NavBar from "./components/NavBar";
 
 const inter = Inter({
 	subsets: ["latin"],
@@ -30,7 +30,10 @@ export default function RootLayout({
 		<html
 			lang="en"
 			className={`${inter.variable} ${raleway.variable} font-sans`}>
-			<body>{children}</body>
+			<body>
+				<Toaster position="top-right" />
+				{children}
+			</body>
 		</html>
 	);
 }

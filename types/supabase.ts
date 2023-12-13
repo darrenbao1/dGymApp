@@ -44,12 +44,59 @@ export interface Database {
           }
         ]
       }
+      weight_entries: {
+        Row: {
+          date: string
+          id: number
+          inserted_at: string
+          profile_id: string
+          updated_at: string
+          weight: number
+        }
+        Insert: {
+          date: string
+          id?: number
+          inserted_at?: string
+          profile_id: string
+          updated_at?: string
+          weight: number
+        }
+        Update: {
+          date?: string
+          id?: number
+          inserted_at?: string
+          profile_id?: string
+          updated_at?: string
+          weight?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "weight_entries_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      delete_avatar: {
+        Args: {
+          avatar_url: string
+        }
+        Returns: Record<string, unknown>
+      }
+      delete_storage_object: {
+        Args: {
+          bucket: string
+          object: string
+        }
+        Returns: Record<string, unknown>
+      }
     }
     Enums: {
       [_ in never]: never
