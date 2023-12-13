@@ -14,7 +14,7 @@
      text-white  text-xs font-bold;
 	}
 	.main-content {
-		@apply w-screen bg-slate-500 h-[calc(100vh-80px)] p-6 flex items-center fixed;
+		@apply w-screen bg-slate-500 h-[calc(100vh-160px)] p-6 flex items-center fixed;
 	}
 	.primary-button {
 		@apply bg-primary text-white font-bold py-2 px-4 rounded-full items-center text-center hover:bg-primaryHover active:bg-primaryActive;
