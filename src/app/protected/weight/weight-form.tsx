@@ -8,6 +8,7 @@ import {
 import { toast } from "react-hot-toast";
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import WeightGraph from "./weight-graph";
 
 export default function WeightForm({ session }: { session: Session | null }) {
 	const supabase = createClientComponentClient<Database>();
@@ -94,6 +95,9 @@ export default function WeightForm({ session }: { session: Session | null }) {
 				className="primary-button">
 				Save Weight
 			</button>
+			<div className="container my-auto">
+				<WeightGraph session={session} />
+			</div>
 		</div>
 	);
 }
