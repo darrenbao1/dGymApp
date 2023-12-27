@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { Database } from "../../../../types/supabase";
 import {
 	Session,
@@ -8,19 +8,36 @@ import {
 import Avatar from "./avatar";
 import { toast } from "react-hot-toast";
 
+interface accountDetails {
+	fullname: string | null;
+	username: string | null;
+	website: string | null;
+	avatar_url: string | null;
+	isLoading: boolean;
+}
+
 export default function AccountForm({ session }: { session: Session | null }) {
+	const [accountDetails, setAccountDetails] = useState<accountDetails>({
+		fullname: null,
+		username: null,
+		website: null,
+		avatar_url: null,
+		isLoading: true,
+	});
+
 	const supabase = createClientComponentClient<Database>();
-	const [loading, setLoading] = useState(true);
-	const [fullname, setFullname] = useState<string | null>(null);
-	const [username, setUsername] = useState<string | null>(null);
-	const [website, setWebsite] = useState<string | null>(null);
-	const [avatar_url, setAvatarUrl] = useState<string | null>(null);
 	const user = session?.user;
+
+	const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+		setAccountDetails((prev) => ({
+			...prev,
+			[e.target.name]: e.target.value,
+		}));
+	};
 
 	const getProfile = useCallback(async () => {
 		try {
-			setLoading(true);
-
+			setAccountDetails({ ...accountDetails, isLoading: true });
 			const { data, error, status } = await supabase
 				.from("profiles")
 				.select(`full_name, username, website, avatar_url`)
@@ -32,15 +49,18 @@ export default function AccountForm({ session }: { session: Session | null }) {
 			}
 
 			if (data) {
-				setFullname(data.full_name);
-				setUsername(data.username);
-				setWebsite(data.website);
-				setAvatarUrl(data.avatar_url);
+				setAccountDetails({
+					...accountDetails,
+					fullname: data.full_name,
+					username: data.username,
+					website: data.website,
+					avatar_url: data.avatar_url,
+				});
 			}
 		} catch (error) {
 			alert("Error loading user data!");
 		} finally {
-			setLoading(false);
+			setAccountDetails((prev) => ({ ...prev, isLoading: false }));
 		}
 	}, [user, supabase]);
 
@@ -49,6 +69,7 @@ export default function AccountForm({ session }: { session: Session | null }) {
 	}, [user, getProfile]);
 
 	async function updateProfile({
+		fullname,
 		username,
 		website,
 		avatar_url,
@@ -59,8 +80,7 @@ export default function AccountForm({ session }: { session: Session | null }) {
 		avatar_url: string | null;
 	}) {
 		try {
-			setLoading(true);
-
+			setAccountDetails({ ...accountDetails, isLoading: true });
 			const { error } = await supabase.from("profiles").upsert({
 				id: user?.id as string,
 				full_name: fullname,
@@ -70,12 +90,11 @@ export default function AccountForm({ session }: { session: Session | null }) {
 				updated_at: new Date().toISOString(),
 			});
 			if (error) throw error;
-			//alert("Profile updated!");
 			toast.success("Profile updated!");
 		} catch (error) {
 			alert("Error updating the data!");
 		} finally {
-			setLoading(false);
+			setAccountDetails((prev) => ({ ...prev, isLoading: false }));
 		}
 	}
 
@@ -85,11 +104,11 @@ export default function AccountForm({ session }: { session: Session | null }) {
 				<div>
 					<Avatar
 						uid={user!.id}
-						url={avatar_url}
+						url={accountDetails.avatar_url}
 						size={100}
 						onUpload={(url) => {
-							setAvatarUrl(url);
-							updateProfile({ fullname, username, website, avatar_url: url });
+							setAccountDetails({ ...accountDetails, avatar_url: url });
+							updateProfile({ ...accountDetails, avatar_url: url });
 						}}
 					/>
 				</div>
@@ -111,10 +130,11 @@ export default function AccountForm({ session }: { session: Session | null }) {
 					Full Name:
 				</label>
 				<input
-					id="fullName"
+					name="fullname"
+					id="fullname"
 					type="text"
-					value={fullname || ""}
-					onChange={(e) => setFullname(e.target.value)}
+					value={accountDetails.fullname || ""}
+					onChange={handleChange}
 					className="primary-input"
 					placeholder="Full Name"
 				/>
@@ -124,11 +144,12 @@ export default function AccountForm({ session }: { session: Session | null }) {
 					Username:
 				</label>
 				<input
+					name="username"
 					id="username"
 					type="text"
-					value={username || ""}
+					value={accountDetails.username || ""}
 					className="primary-input"
-					onChange={(e) => setUsername(e.target.value)}
+					onChange={handleChange}
 					placeholder="Username"
 				/>
 			</div>
@@ -137,10 +158,11 @@ export default function AccountForm({ session }: { session: Session | null }) {
 					Website:
 				</label>
 				<input
+					name="website"
 					id="website"
 					type="url"
-					value={website || ""}
-					onChange={(e) => setWebsite(e.target.value)}
+					value={accountDetails.website || ""}
+					onChange={handleChange}
 					className="primary-input"
 					placeholder="Website"
 				/>
@@ -149,11 +171,9 @@ export default function AccountForm({ session }: { session: Session | null }) {
 				<div>
 					<button
 						className="primary-button"
-						onClick={() =>
-							updateProfile({ fullname, username, website, avatar_url })
-						}
-						disabled={loading}>
-						{loading ? "Loading ..." : "Update"}
+						onClick={() => updateProfile({ ...accountDetails })}
+						disabled={accountDetails.isLoading}>
+						{accountDetails.isLoading ? "Loading ..." : "Update"}
 					</button>
 				</div>
 
