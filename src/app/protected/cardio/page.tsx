@@ -15,7 +15,6 @@ export default async function Page() {
 		<div className="main-content">
 			<div className="relative container bg-gray-900 rounded-xl p-6 shadow-xxl flex flex-col overflow-auto h-full gap-2">
 				<Cardio session={session} />
-				<NewWorkoutButton />
 			</div>
 		</div>
 	);

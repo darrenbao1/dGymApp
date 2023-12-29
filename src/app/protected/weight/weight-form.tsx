@@ -9,6 +9,7 @@ import { toast } from "react-hot-toast";
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import WeightGraph from "./weight-graph";
+import DateToStringSupabase from "@/utils/DateToStringSupabase";
 
 export default function WeightForm({ session }: { session: Session | null }) {
 	const supabase = createClientComponentClient<Database>();
@@ -18,7 +19,7 @@ export default function WeightForm({ session }: { session: Session | null }) {
 
 	const getWeightEntryByDate = useCallback(async () => {
 		try {
-			const dateStr = selectedDate.toISOString().slice(0, 10);
+			const dateStr = DateToStringSupabase(selectedDate);
 			const { data, error } = await supabase
 				.from("weight_entries")
 				.select("weight")
@@ -47,7 +48,7 @@ export default function WeightForm({ session }: { session: Session | null }) {
 
 	async function upsertWeightEntry(weight: number) {
 		try {
-			const dateStr = selectedDate.toISOString().slice(0, 10);
+			const dateStr = DateToStringSupabase(selectedDate);
 			const { error } = await supabase.from("weight_entries").upsert({
 				profile_id: user!.id,
 				weight: weight,

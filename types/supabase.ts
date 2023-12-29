@@ -9,6 +9,50 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      cardio_entries: {
+        Row: {
+          caption: string | null
+          durationinminutes: number
+          id: number
+          image_url: string | null
+          inserted_at: string
+          profile_id: string
+          updated_at: string
+          workout_datetime: string
+          workout_type: string
+        }
+        Insert: {
+          caption?: string | null
+          durationinminutes: number
+          id?: number
+          image_url?: string | null
+          inserted_at?: string
+          profile_id: string
+          updated_at?: string
+          workout_datetime: string
+          workout_type: string
+        }
+        Update: {
+          caption?: string | null
+          durationinminutes?: number
+          id?: number
+          image_url?: string | null
+          inserted_at?: string
+          profile_id?: string
+          updated_at?: string
+          workout_datetime?: string
+          workout_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cardio_entries_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null

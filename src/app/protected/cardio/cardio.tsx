@@ -6,6 +6,7 @@ import {
 import { toast } from "react-hot-toast";
 import { Database } from "../../../../types/supabase";
 import { useMemo, useState } from "react";
+import NewWorkoutButton from "./newWorkoutButton";
 
 interface Filter {
 	timeFrame: string;
@@ -97,6 +98,7 @@ export default function Cardio({ session }: { session: Session | null }) {
 					))}
 				</select>
 			</div>
+			<NewWorkoutButton userId={user?.id} />
 		</>
 	);
 }

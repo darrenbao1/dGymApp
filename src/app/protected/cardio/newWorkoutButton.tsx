@@ -3,11 +3,18 @@
 import { useCallback, useState } from "react";
 import { AddWorkoutModal } from "./addWorkoutModal";
 
-export default function NewWorkoutButton() {
+interface Props {
+	userId: string | undefined;
+}
+
+export default function NewWorkoutButton(props: Props) {
+	const { userId } = props;
 	const [isModalOpen, setModalOpen] = useState(false);
 
 	const openModal = useCallback(() => setModalOpen(true), []);
 	const closeModal = useCallback(() => setModalOpen(false), []);
+
+	if (!userId) return null;
 
 	return (
 		<>
@@ -29,7 +36,11 @@ export default function NewWorkoutButton() {
 					/>
 				</svg>
 			</button>
-			<AddWorkoutModal isOpen={isModalOpen} onClose={closeModal} />
+			<AddWorkoutModal
+				isOpen={isModalOpen}
+				onClose={closeModal}
+				userId={userId}
+			/>
 		</>
 	);
 }
