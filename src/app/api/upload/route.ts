@@ -30,36 +30,36 @@ export async function POST(req: Request) {
 		}
 		console.log("halfway there");
 
-		cloudinary.uploader
-			.upload_stream({
-				resource_type: "image",
-				max_file_size: 10 * 1024 * 1024,
-				folder: userId ? userId : "no-user",
-			})
-			.end(fileBuffer);
-		// const res: UploadApiResponse = await new Promise((resolve, reject) => {
-		// 	cloudinary.uploader
-		// 		.upload_stream(
-		// 			{
-		// 				resource_type: "image",
-		// 				max_file_size: 10 * 1024 * 1024,
-		// 				folder: userId ? userId : "no-user",
-		// 			},
-		// 			(error, result) => {
-		// 				if (error) {
-		// 					console.log(userId);
-		// 					console.log();
-		// 					console.log(error);
-		// 					//reject(error);
-		// 					return NextResponse.json({ error: "rejection here" });
-		// 				} else {
-		// 					resolve(result!);
-		// 					return NextResponse.json({ url: result?.secure_url });
-		// 				}
-		// 			}
-		// 		)
-		// 		.end(fileBuffer);
-		// });
+		// cloudinary.uploader
+		// 	.upload_stream({
+		// 		resource_type: "image",
+		// 		max_file_size: 10 * 1024 * 1024,
+		// 		folder: userId ? userId : "no-user",
+		// 	})
+		// 	.end(fileBuffer);
+		const res: UploadApiResponse = await new Promise((resolve, reject) => {
+			cloudinary.uploader
+				.upload_stream(
+					{
+						resource_type: "image",
+						max_file_size: 10 * 1024 * 1024,
+						folder: userId ? userId : "no-user",
+					},
+					(error, result) => {
+						if (error) {
+							console.log(userId);
+							console.log();
+							console.log(error);
+							//reject(error);
+							return NextResponse.json({ error: "rejection here" });
+						} else {
+							resolve(result!);
+							return NextResponse.json({ url: result?.secure_url });
+						}
+					}
+				)
+				.end(fileBuffer?.toString());
+		});
 		console.log("after res");
 
 		return NextResponse.json({ url: "asdf" });
