@@ -39,6 +39,7 @@ export async function POST(req: Request) {
 					},
 					(error, result) => {
 						if (error) {
+							console.log(error);
 							reject(error);
 							return NextResponse.json({ error: "rejection here" });
 						} else {
