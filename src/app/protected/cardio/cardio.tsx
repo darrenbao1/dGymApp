@@ -5,7 +5,7 @@ import {
 } from "@supabase/auth-helpers-nextjs";
 import { toast } from "react-hot-toast";
 import { Database } from "../../../../types/supabase";
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import NewWorkoutButton from "./newWorkoutButton";
 
 interface Filter {
@@ -29,10 +29,35 @@ enum ExerciseType {
 	Bike = "bike",
 }
 
+interface CardioData {
+	caption: string | null;
+	durationinminutes: number;
+	id: number;
+	image_url: string | null;
+	inserted_at: string;
+	profile_id: string;
+	updated_at: string;
+	workout_datetime: string;
+	workout_type: string;
+	profiles: any;
+}
+interface ProfileData {
+	avatar_url: string | null;
+	full_name: string | null;
+	id: string;
+	updated_at: string | null;
+	username: string | null;
+	website: string | null;
+}
+interface AvatarUrls {
+	[key: string]: string;
+}
+
 export default function Cardio({ session }: { session: Session | null }) {
 	const supabase = createClientComponentClient<Database>();
 	const user = session?.user;
-
+	const [cardioDataArray, setCardioDataArray] = useState<CardioData[] | null>();
+	const [avatarUrls, setAvatarUrls] = useState<AvatarUrls>({});
 	const [filter, setFilter] = useState<Filter>({
 		timeFrame: TimeFrame.ThisWeek,
 		exerciseType: ExerciseType.All,
@@ -42,8 +67,71 @@ export default function Cardio({ session }: { session: Session | null }) {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	//useMemo is used to prevent unnecessary re-renders
 	const filteredSessions = useMemo(() => {
-		console.log("filter changed");
-	}, [filter]);
+		//filter cardioDataArray with the filter object
+		if (!cardioDataArray) return [];
+
+		return cardioDataArray.filter((session) => {
+			const isUserSession =
+				!filter.isYourSession || session.profile_id === user?.id;
+			return isUserSession;
+		});
+	}, [filter, cardioDataArray]);
+
+	const downloadAvatar = async (userId: string, path: string) => {
+		try {
+			const { data, error } = await supabase.storage
+				.from("avatars")
+				.download(path);
+			if (error) {
+				throw error;
+			}
+			const url = URL.createObjectURL(data);
+			setAvatarUrls((prevUrls) => ({ ...prevUrls, [userId]: url }));
+		} catch (error) {
+			console.error("Error downloading avatar for user", userId, error);
+		}
+	};
+
+	const getCardioEntry = useCallback(async () => {
+		try {
+			const { data, error } = await supabase
+				.from("cardio_entries")
+				.select(
+					`
+			*,
+			profiles (
+				id,
+				username,
+				full_name,
+				avatar_url,
+				website
+			)
+		`
+				)
+				.order("inserted_at", { ascending: false });
+
+			if (error) {
+				throw error;
+			}
+			if (data) {
+				setCardioDataArray(data);
+				data.forEach((entry: CardioData) => {
+					if (entry.profiles.avatar_url) {
+						downloadAvatar(entry.profile_id, entry.profiles.avatar_url);
+					}
+				});
+			} else {
+				setCardioDataArray(null);
+			}
+		} catch (error) {
+			setCardioDataArray(null);
+			toast.error("Error retrieving data");
+		}
+	}, [user, supabase]);
+
+	useEffect(() => {
+		getCardioEntry();
+	}, [user, getCardioEntry]);
 
 	return (
 		<>
@@ -67,8 +155,8 @@ export default function Cardio({ session }: { session: Session | null }) {
 					Global
 				</button>
 			</div>
-			<div className="flex gap-2">
-				{/* Time Frame Dropdown */}
+			{/* <div className="flex gap-2">
+				
 				<select
 					className="flex-1 form-select rounded-lg bg-gray-700 text-white p-2"
 					value={filter.timeFrame}
@@ -81,7 +169,7 @@ export default function Cardio({ session }: { session: Session | null }) {
 						</option>
 					))}
 				</select>
-				{/* Exercise Type Dropdown */}
+				
 				<select
 					className="flex-1 form-select rounded-lg bg-gray-700 text-white p-2"
 					value={filter.exerciseType}
@@ -97,8 +185,52 @@ export default function Cardio({ session }: { session: Session | null }) {
 						</option>
 					))}
 				</select>
+			</div> */}
+			<div className="overflow-auto">
+				{filteredSessions?.map((item, index) => {
+					const profileObj = item.profiles as ProfileData;
+					const avatarUrl = avatarUrls[item.profile_id] || "default-avatar.png";
+					return (
+						<div key={index} className="cardio-post">
+							<div className="user-info">
+								<img
+									src={avatarUrl || "default-avatar.png"}
+									alt="User Avatar"
+									className="avatar"
+								/>
+								<span className="username">{profileObj.username}</span>
+							</div>
+
+							<div className="workout-info">
+								<p>
+									<strong>Workout:</strong> {item.workout_type}
+								</p>
+
+								<p>
+									<strong>Duration:</strong> {item.durationinminutes} minutes
+								</p>
+								{item.caption && <p className="caption">{item.caption}</p>}
+							</div>
+
+							{item.image_url && (
+								<img
+									src={item.image_url}
+									alt="Workout"
+									className="workout-image"
+								/>
+							)}
+
+							<div className="post-footer">
+								<span>
+									Posted on{" "}
+									{new Date(item.workout_datetime).toLocaleDateString()}
+								</span>
+							</div>
+						</div>
+					);
+				})}
 			</div>
-			<NewWorkoutButton userId={user?.id} />
+			<NewWorkoutButton userId={user?.id} refetch={getCardioEntry} />
 		</>
 	);
 }

@@ -8,6 +8,7 @@ interface ModalProps {
 	isOpen: boolean;
 	onClose: () => void;
 	userId: string;
+	refetch: () => void;
 }
 
 enum ExerciseChoices {
@@ -29,14 +30,18 @@ export const AddWorkoutModal: FC<ModalProps> = ({
 	isOpen,
 	onClose,
 	userId,
+	refetch,
 }) => {
-	const [workoutDetails, setWorkoutDetails] = useState<WorkoutDetails>({
+	const defaultWorkoutDetails = {
 		caption: "",
 		image_url: null,
 		workout_type: ExerciseChoices.Stairs,
 		workout_datetime: new Date(),
 		durationInMinutes: 0,
-	});
+	};
+	const [workoutDetails, setWorkoutDetails] = useState<WorkoutDetails>(
+		defaultWorkoutDetails
+	);
 
 	//state and onChange for image upload
 	const [image, setImage] = useState<File | null>(null);
@@ -55,6 +60,7 @@ export const AddWorkoutModal: FC<ModalProps> = ({
 
 		const formData = new FormData();
 		formData.append("file", image);
+		formData.append("userId", userId);
 
 		try {
 			const response = await fetch("/api/upload", {
@@ -95,6 +101,9 @@ export const AddWorkoutModal: FC<ModalProps> = ({
 		try {
 			const dateStr = DateToStringSupabase(workoutDetails.workout_datetime);
 			const imageUrl = await uploadFile();
+
+			if (!imageUrl) throw new Error("Error uploading image!");
+
 			const { error } = await supabase.from("cardio_entries").upsert({
 				profile_id: userId,
 				workout_type: workoutDetails.workout_type,
@@ -105,6 +114,7 @@ export const AddWorkoutModal: FC<ModalProps> = ({
 				updated_at: new Date().toISOString(),
 			});
 			if (error) throw error;
+			refetch();
 			toast.success("Workout entry updated!");
 		} catch (error) {
 			toast.error("Error updating workout data!");
@@ -129,6 +139,7 @@ export const AddWorkoutModal: FC<ModalProps> = ({
 					<button
 						onClick={() => {
 							upsertWorkoutEntry(workoutDetails);
+							setWorkoutDetails(defaultWorkoutDetails);
 							onClose();
 						}}
 						className={`text-s primary-button float-right`}>

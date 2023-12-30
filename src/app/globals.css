@@ -37,6 +37,36 @@
 	}
 }
 
+.cardio-post {
+	border: 1px solid #ddd;
+	padding: 15px;
+	margin-bottom: 20px;
+	border-radius: 5px;
+}
+
+.user-info {
+	display: flex;
+	align-items: center;
+	margin-bottom: 10px;
+}
+
+.avatar {
+	width: 50px;
+	height: 50px;
+	border-radius: 50%;
+	margin-right: 10px;
+}
+
+.workout-image {
+	width: 200px;
+	margin-top: 10px;
+}
+
+.post-footer {
+	color: #666;
+	margin-top: 10px;
+}
+
 :root {
 	--foreground-rgb: 0, 0, 0;
 	--background-start-rgb: 214, 219, 220;

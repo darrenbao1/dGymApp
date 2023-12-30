@@ -5,10 +5,11 @@ import { AddWorkoutModal } from "./addWorkoutModal";
 
 interface Props {
 	userId: string | undefined;
+	refetch: () => void;
 }
 
 export default function NewWorkoutButton(props: Props) {
-	const { userId } = props;
+	const { userId,refetch } = props;
 	const [isModalOpen, setModalOpen] = useState(false);
 
 	const openModal = useCallback(() => setModalOpen(true), []);
@@ -40,6 +41,7 @@ export default function NewWorkoutButton(props: Props) {
 				isOpen={isModalOpen}
 				onClose={closeModal}
 				userId={userId}
+				refetch={refetch}
 			/>
 		</>
 	);
