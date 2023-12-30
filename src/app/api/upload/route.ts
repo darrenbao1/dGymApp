@@ -7,26 +7,28 @@ cloudinary.config({
 });
 
 export async function POST(req: Request) {
-	const formData = await req.formData();
-	let fileBuffer: Buffer | null = null;
-	let userId: string | null = null;
-	for (const [key, value] of formData.entries()) {
-		if (typeof value === "object" && value !== null) {
-			// Assuming 'file' is the key for the uploaded file
-			if (key === "file") {
-				// Convert the file to a Buffer
-				const file = value as File;
-				const arrayBuffer = await file.arrayBuffer();
-				fileBuffer = Buffer.from(arrayBuffer);
-			}
-		}
-		if (typeof value === "string" && value !== null) {
-			if (key === "userId") {
-				userId = value;
-			}
-		}
-	}
 	try {
+		const formData = await req.formData();
+		let fileBuffer: Buffer | null = null;
+		let userId: string | null = null;
+		for (const [key, value] of formData.entries()) {
+			if (typeof value === "object" && value !== null) {
+				// Assuming 'file' is the key for the uploaded file
+				if (key === "file") {
+					// Convert the file to a Buffer
+					const file = value as File;
+					const arrayBuffer = await file.arrayBuffer();
+					fileBuffer = Buffer.from(arrayBuffer);
+				}
+			}
+			if (typeof value === "string" && value !== null) {
+				if (key === "userId") {
+					userId = value;
+				}
+			}
+		}
+		console.log("halfway there");
+
 		const res: UploadApiResponse = await new Promise((resolve, reject) => {
 			cloudinary.uploader
 				.upload_stream(
@@ -47,6 +49,7 @@ export async function POST(req: Request) {
 				)
 				.end(fileBuffer);
 		});
+		console.log("after res");
 
 		return NextResponse.json({ url: res.secure_url });
 	} catch (error) {
