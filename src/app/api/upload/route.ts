@@ -38,10 +38,10 @@ export async function POST(req: Request) {
 					(error, result) => {
 						if (error) {
 							reject(error);
-							Response.json({ error: "rejection here" });
+							return Response.json({ error: "rejection here" });
 						} else {
 							resolve(result!);
-							Response.json({ url: result?.secure_url });
+							return Response.json({ url: result?.secure_url });
 						}
 					}
 				)
