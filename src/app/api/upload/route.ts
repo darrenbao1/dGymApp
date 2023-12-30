@@ -62,7 +62,7 @@ export async function POST(req: Request) {
 		// });
 		console.log("after res");
 
-		return NextResponse.json({ url: "" });
+		return NextResponse.json({ url: "asdf" });
 	} catch (error) {
 		console.log(error);
 		return NextResponse.json({ error: "error occurred" });
