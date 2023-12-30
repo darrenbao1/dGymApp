@@ -26,23 +26,31 @@ export async function POST(req: Request) {
 			}
 		}
 	}
-	const res: UploadApiResponse = await new Promise((resolve, reject) => {
-		cloudinary.uploader
-			.upload_stream(
-				{
-					resource_type: "image",
-					max_file_size: 10 * 1024 * 1024,
-					folder: userId ? userId : "no-user",
-				},
-				(error, result) => {
-					if (error) {
-						reject(error);
-					} else {
-						resolve(result!);
+	try {
+		const res: UploadApiResponse = await new Promise((resolve, reject) => {
+			cloudinary.uploader
+				.upload_stream(
+					{
+						resource_type: "image",
+						max_file_size: 10 * 1024 * 1024,
+						folder: userId ? userId : "no-user",
+					},
+					(error, result) => {
+						if (error) {
+							reject(error);
+							Response.json({ error: "rejection here" });
+						} else {
+							resolve(result!);
+							Response.json({ url: result?.secure_url });
+						}
 					}
-				}
-			)
-			.end(fileBuffer);
-	});
-	return Response.json({ url: res.secure_url });
+				)
+				.end(fileBuffer);
+		});
+
+		return Response.json({ url: res.secure_url });
+	} catch (error) {
+		console.log(error);
+		return Response.json({ error: "error occurred" });
+	}
 }
