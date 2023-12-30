@@ -8,6 +8,7 @@ cloudinary.config({
 
 export async function POST(req: Request) {
 	try {
+		console.log(process.env.CLOUDINARY_CLOUD_NAME);
 		const formData = await req.formData();
 		let fileBuffer: Buffer | null = null;
 		let userId: string | null = null;
@@ -58,7 +59,7 @@ export async function POST(req: Request) {
 						}
 					}
 				)
-				.end(fileBuffer?.toString());
+				.end(fileBuffer);
 		});
 		console.log("after res");
 
