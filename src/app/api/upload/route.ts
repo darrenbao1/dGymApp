@@ -1,5 +1,5 @@
 import { v2 as cloudinary, UploadApiResponse } from "cloudinary";
-
+import { NextResponse } from "next/server";
 cloudinary.config({
 	cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
 	api_key: process.env.CLOUDINARY_API_KEY,
@@ -38,19 +38,19 @@ export async function POST(req: Request) {
 					(error, result) => {
 						if (error) {
 							reject(error);
-							return Response.json({ error: "rejection here" });
+							return NextResponse.json({ error: "rejection here" });
 						} else {
 							resolve(result!);
-							return Response.json({ url: result?.secure_url });
+							return NextResponse.json({ url: result?.secure_url });
 						}
 					}
 				)
 				.end(fileBuffer);
 		});
 
-		return Response.json({ url: res.secure_url });
+		return NextResponse.json({ url: res.secure_url });
 	} catch (error) {
 		console.log(error);
-		return Response.json({ error: "error occurred" });
+		return NextResponse.json({ error: "error occurred" });
 	}
 }
