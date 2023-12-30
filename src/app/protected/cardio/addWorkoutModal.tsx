@@ -1,3 +1,4 @@
+"use client";
 import DateToStringSupabase from "@/utils/DateToStringSupabase";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import React, { ChangeEvent, FC, ReactNode, useState } from "react";
