@@ -8,7 +8,6 @@ cloudinary.config({
 
 export async function POST(req: Request) {
 	try {
-		console.log(process.env.CLOUDINARY_CLOUD_NAME);
 		const formData = await req.formData();
 		let fileBuffer: Buffer | null = null;
 		let userId: string | null = null;
@@ -48,14 +47,10 @@ export async function POST(req: Request) {
 					},
 					(error, result) => {
 						if (error) {
-							console.log(userId);
-							console.log();
 							console.log(error);
-							//reject(error);
-							return NextResponse.json({ error: "rejection here" });
+							reject(error);
 						} else {
 							resolve(result!);
-							return NextResponse.json({ url: result?.secure_url });
 						}
 					}
 				)
@@ -63,7 +58,7 @@ export async function POST(req: Request) {
 		});
 		console.log("after res");
 
-		return NextResponse.json({ url: "asdf" });
+		return NextResponse.json({ url: res.secure_url });
 	} catch (error) {
 		console.log(error);
 		return NextResponse.json({ error: "error occurred" });
