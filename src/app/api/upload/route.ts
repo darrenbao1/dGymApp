@@ -17,6 +17,7 @@ export async function POST(req: Request) {
 				if (key === "file") {
 					// Convert the file to a Buffer
 					const file = value as File;
+					console.log(file);
 					const arrayBuffer = await file.arrayBuffer();
 					fileBuffer = Buffer.from(arrayBuffer);
 				}
@@ -39,6 +40,8 @@ export async function POST(req: Request) {
 					},
 					(error, result) => {
 						if (error) {
+							console.log(userId);
+							console.log();
 							console.log(error);
 							//reject(error);
 							return NextResponse.json({ error: "rejection here" });
