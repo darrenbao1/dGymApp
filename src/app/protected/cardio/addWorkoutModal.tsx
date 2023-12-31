@@ -81,60 +81,8 @@ export const AddWorkoutModal: FC<ModalProps> = ({
 			} catch (error) {
 				console.log(error);
 			}
-			// reader.onloadend = async () => {
-			// 	console.log("testing inside fule64");
-			// 	const base64String = reader.result;
-			// 	try {
-			// 		console.log("here");
-			// 		const response = await fetch("/api/uploadImage", {
-			// 			method: "POST",
-			// 			body: JSON.stringify({ image: base64String, userId: userId }),
-			// 		});
-			// 		if (!response.ok) {
-			// 			throw new Error("Upload failed");
-			// 		}
-			// 		const data = await response.json();
-
-			// 		return data.url;
-			// 	} catch (error) {
-			// 		console.error("Error during upload:", error);
-			// 		return null;
-			// 	}
-			// 	// Return the secure URL
-			// };
 		}
 	};
-
-	const uploadFile = async () => {
-		if (!image) {
-			alert("Please select a file first!");
-			return null; // Return null if no file is selected
-		}
-
-		const formData = new FormData();
-		formData.append("file", image);
-		formData.append("userId", userId);
-
-		try {
-			const response = await fetch("/api/upload", {
-				method: "POST",
-				body: formData,
-			});
-
-			if (!response.ok) {
-				throw new Error("Upload failed");
-			}
-
-			const data = await response.json();
-
-			return data.url; // Return the secure URL
-		} catch (error) {
-			console.error("Error during file upload:", error);
-			return null; // Return null in case of an error
-		}
-	};
-
-	//end image upload
 
 	const handleChange = (
 		e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -152,6 +100,7 @@ export const AddWorkoutModal: FC<ModalProps> = ({
 
 	async function upsertWorkoutEntry(workoutDetails: WorkoutDetails) {
 		try {
+			//toast.loading("Workout uploading");
 			const dateStr = DateToStringSupabase(workoutDetails.workout_datetime);
 			const imageUrl = await uploadFileBase64();
 
@@ -168,9 +117,10 @@ export const AddWorkoutModal: FC<ModalProps> = ({
 			});
 			if (error) throw error;
 			refetch();
-			toast.success("Workout entry updated!");
+
+			//toast.success("Workout entry updated!");
 		} catch (error) {
-			toast.error("Error updating workout data!");
+			//toast.error("Error updating workout data!");
 		}
 	}
 
@@ -191,7 +141,12 @@ export const AddWorkoutModal: FC<ModalProps> = ({
 					</button>
 					<button
 						onClick={() => {
-							upsertWorkoutEntry(workoutDetails);
+							const upsert = upsertWorkoutEntry(workoutDetails);
+							toast.promise(upsert, {
+								loading: "uploading workout",
+								success: "Workout successfully uploaded",
+								error: "Error uploading workout",
+							});
 							setWorkoutDetails(defaultWorkoutDetails);
 							onClose();
 						}}
