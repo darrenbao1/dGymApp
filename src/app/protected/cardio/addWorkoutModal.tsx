@@ -53,6 +53,58 @@ export const AddWorkoutModal: FC<ModalProps> = ({
 		}
 	};
 
+	const toBase64 = (file: File) =>
+		new Promise((resolve, reject) => {
+			const reader = new FileReader();
+			reader.readAsDataURL(file);
+			reader.onload = () => resolve(reader.result);
+			reader.onerror = reject;
+		});
+
+	const uploadFileBase64 = async () => {
+		if (!image) {
+			alert("Please select a file first!");
+			return null; // Return null if no file is selected
+		}
+		if (image) {
+			const fileStr = await toBase64(image);
+			try {
+				const res = await fetch("/api/uploadImage", {
+					method: "POST",
+					body: JSON.stringify({ image: fileStr, userId: userId }),
+				});
+				if (!res.ok) {
+					throw new Error("upload failed");
+				}
+				const data = await res.json();
+				return data.url;
+			} catch (error) {
+				console.log(error);
+			}
+			// reader.onloadend = async () => {
+			// 	console.log("testing inside fule64");
+			// 	const base64String = reader.result;
+			// 	try {
+			// 		console.log("here");
+			// 		const response = await fetch("/api/uploadImage", {
+			// 			method: "POST",
+			// 			body: JSON.stringify({ image: base64String, userId: userId }),
+			// 		});
+			// 		if (!response.ok) {
+			// 			throw new Error("Upload failed");
+			// 		}
+			// 		const data = await response.json();
+
+			// 		return data.url;
+			// 	} catch (error) {
+			// 		console.error("Error during upload:", error);
+			// 		return null;
+			// 	}
+			// 	// Return the secure URL
+			// };
+		}
+	};
+
 	const uploadFile = async () => {
 		if (!image) {
 			alert("Please select a file first!");
@@ -101,7 +153,7 @@ export const AddWorkoutModal: FC<ModalProps> = ({
 	async function upsertWorkoutEntry(workoutDetails: WorkoutDetails) {
 		try {
 			const dateStr = DateToStringSupabase(workoutDetails.workout_datetime);
-			const imageUrl = await uploadFile();
+			const imageUrl = await uploadFileBase64();
 
 			if (!imageUrl) throw new Error("Error uploading image!");
 

@@ -17,7 +17,6 @@ export async function POST(req: Request) {
 				if (key === "file") {
 					// Convert the file to a Buffer
 					const file = value as File;
-					console.log(file);
 					const arrayBuffer = await file.arrayBuffer();
 					fileBuffer = Buffer.from(arrayBuffer);
 				}
@@ -28,44 +27,26 @@ export async function POST(req: Request) {
 				}
 			}
 		}
-		console.log("halfway there");
 
-		// cloudinary.uploader
-		// 	.upload_stream({
-		// 		resource_type: "image",
-		// 		max_file_size: 10 * 1024 * 1024,
-		// 		folder: userId ? userId : "no-user",
-		// 	})
-		// 	.end(fileBuffer);
-
-		const res: UploadApiResponse = await cloudinary.uploader.upload(
-			fileBuffer!.toString("base64"),
-			{
-				folder: userId ? userId : "no-user",
-				resource_type: "image",
-			}
-		);
-
-		// const res: UploadApiResponse = await new Promise((resolve, reject) => {
-		// 	cloudinary.uploader
-		// 		.upload_stream(
-		// 			{
-		// 				resource_type: "image",
-		// 				max_file_size: 10 * 1024 * 1024,
-		// 				folder: userId ? userId : "no-user",
-		// 			},
-		// 			(error, result) => {
-		// 				if (error) {
-		// 					console.log(error);
-		// 					reject(error);
-		// 				} else {
-		// 					resolve(result!);
-		// 				}
-		// 			}
-		// 		)
-		// 		.end(fileBuffer);
-		// });
-		console.log("after res");
+		const res: UploadApiResponse = await new Promise((resolve, reject) => {
+			cloudinary.uploader
+				.upload_stream(
+					{
+						resource_type: "image",
+						max_file_size: 10 * 1024 * 1024,
+						folder: userId ? userId : "no-user",
+					},
+					(error, result) => {
+						if (error) {
+							console.log(error);
+							reject(error);
+						} else {
+							resolve(result!);
+						}
+					}
+				)
+				.end(fileBuffer);
+		});
 
 		return NextResponse.json({ url: res.secure_url });
 	} catch (error) {
