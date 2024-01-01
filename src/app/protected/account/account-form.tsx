@@ -80,7 +80,7 @@ export default function AccountForm({ session }: { session: Session | null }) {
 		avatar_url: string | null;
 	}) {
 		try {
-			setAccountDetails({ ...accountDetails, isLoading: true });
+			setAccountDetails((prev) => ({ ...prev, isLoading: true }));
 			const { error } = await supabase.from("profiles").upsert({
 				id: user?.id as string,
 				full_name: fullname,
@@ -92,7 +92,7 @@ export default function AccountForm({ session }: { session: Session | null }) {
 			if (error) throw error;
 			toast.success("Profile updated!");
 		} catch (error) {
-			alert("Error updating the data!");
+			toast.error("Error updating profile");
 		} finally {
 			setAccountDetails((prev) => ({ ...prev, isLoading: false }));
 		}
@@ -107,7 +107,7 @@ export default function AccountForm({ session }: { session: Session | null }) {
 						url={accountDetails.avatar_url}
 						size={100}
 						onUpload={(url) => {
-							setAccountDetails({ ...accountDetails, avatar_url: url });
+							setAccountDetails((prev) => ({ ...prev, avatar_url: url }));
 							updateProfile({ ...accountDetails, avatar_url: url });
 						}}
 					/>
