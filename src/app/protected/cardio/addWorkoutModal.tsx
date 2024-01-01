@@ -1,9 +1,10 @@
 "use client";
 import DateToStringSupabase from "@/utils/DateToStringSupabase";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import React, { ChangeEvent, FC, ReactNode, useState } from "react";
+import React, { ChangeEvent, FC, useState } from "react";
 import { Database } from "../../../../types/supabase";
 import { toast } from "react-hot-toast";
+import UploadImageBase64 from "@/utils/UploadImageBase64";
 
 interface ModalProps {
 	isOpen: boolean;
@@ -21,10 +22,9 @@ enum ExerciseChoices {
 
 interface WorkoutDetails {
 	caption: string | null;
-	image_url: string | null;
 	workout_type: string;
 	workout_datetime: Date;
-	durationInMinutes: number;
+	durationinminutes: number;
 }
 
 export const AddWorkoutModal: FC<ModalProps> = ({
@@ -33,54 +33,21 @@ export const AddWorkoutModal: FC<ModalProps> = ({
 	userId,
 	refetch,
 }) => {
+	const supabase = createClientComponentClient<Database>();
 	const defaultWorkoutDetails = {
 		caption: "",
-		image_url: null,
 		workout_type: ExerciseChoices.Stairs,
 		workout_datetime: new Date(),
-		durationInMinutes: 0,
+		durationinminutes: 0,
 	};
 	const [workoutDetails, setWorkoutDetails] = useState<WorkoutDetails>(
 		defaultWorkoutDetails
 	);
-
-	//state and onChange for image upload
 	const [image, setImage] = useState<File | null>(null);
 
 	const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		if (e.target.files && e.target.files[0]) {
 			setImage(e.target.files[0]);
-		}
-	};
-
-	const toBase64 = (file: File) =>
-		new Promise((resolve, reject) => {
-			const reader = new FileReader();
-			reader.readAsDataURL(file);
-			reader.onload = () => resolve(reader.result);
-			reader.onerror = reject;
-		});
-
-	const uploadFileBase64 = async () => {
-		if (!image) {
-			alert("Please select a file first!");
-			return null; // Return null if no file is selected
-		}
-		if (image) {
-			const fileStr = await toBase64(image);
-			try {
-				const res = await fetch("/api/uploadImage", {
-					method: "POST",
-					body: JSON.stringify({ image: fileStr, userId: userId }),
-				});
-				if (!res.ok) {
-					throw new Error("upload failed");
-				}
-				const data = await res.json();
-				return data.url;
-			} catch (error) {
-				console.log(error);
-			}
 		}
 	};
 
@@ -96,33 +63,57 @@ export const AddWorkoutModal: FC<ModalProps> = ({
 			[target.name]: e.target.value,
 		}));
 	};
-	const supabase = createClientComponentClient<Database>();
 
 	async function upsertWorkoutEntry(workoutDetails: WorkoutDetails) {
-		try {
-			//toast.loading("Workout uploading");
-			const dateStr = DateToStringSupabase(workoutDetails.workout_datetime);
-			const imageUrl = await uploadFileBase64();
+		const { caption, workout_type, workout_datetime, durationinminutes } =
+			workoutDetails;
+		if (image) {
+			if (durationinminutes <= 0) {
+				throw new Error("Duration cannot be blank or 0");
+			}
+			try {
+				const imageUrl = await UploadImageBase64(image, userId).catch(
+					(error) => {
+						throw Error(error);
+					}
+				);
 
-			if (!imageUrl) throw new Error("Error uploading image!");
-
-			const { error } = await supabase.from("cardio_entries").upsert({
-				profile_id: userId,
-				workout_type: workoutDetails.workout_type,
-				durationinminutes: workoutDetails.durationInMinutes,
-				workout_datetime: dateStr,
-				caption: workoutDetails.caption,
-				image_url: imageUrl,
-				updated_at: new Date().toISOString(),
-			});
-			if (error) throw error;
-			refetch();
-
-			//toast.success("Workout entry updated!");
-		} catch (error) {
-			//toast.error("Error updating workout data!");
+				const dateStr = DateToStringSupabase(workout_datetime);
+				const { error } = await supabase.from("cardio_entries").upsert({
+					profile_id: userId,
+					caption,
+					workout_type,
+					workout_datetime: dateStr,
+					durationinminutes,
+					image_url: imageUrl,
+					updated_at: new Date().toISOString(),
+				});
+				if (error) throw error;
+			} catch (error) {
+				throw Error("Error saving workout data");
+			}
+		} else {
+			throw Error("Please select an image to upload.");
 		}
 	}
+
+	const handlePostClicked = () => {
+		const upsert = upsertWorkoutEntry(workoutDetails);
+		toast.promise(upsert, {
+			loading: "uploading workout",
+			success: "Workout successfully uploaded",
+			error: (err) => `${err.toString()}`,
+		});
+		upsert
+			.then(() => {
+				setWorkoutDetails(defaultWorkoutDetails);
+				refetch();
+				onClose();
+			})
+			.catch((error) => {
+				console.error("Error during workout uplaod:", error);
+			});
+	};
 
 	return (
 		<div
@@ -140,16 +131,7 @@ export const AddWorkoutModal: FC<ModalProps> = ({
 						cancel
 					</button>
 					<button
-						onClick={() => {
-							const upsert = upsertWorkoutEntry(workoutDetails);
-							toast.promise(upsert, {
-								loading: "uploading workout",
-								success: "Workout successfully uploaded",
-								error: "Error uploading workout",
-							});
-							setWorkoutDetails(defaultWorkoutDetails);
-							onClose();
-						}}
+						onClick={handlePostClicked}
 						className={`text-s primary-button float-right`}>
 						post
 					</button>
@@ -169,7 +151,7 @@ export const AddWorkoutModal: FC<ModalProps> = ({
 						</select>
 						<input
 							className="primary-input"
-							name="durationInMinutes"
+							name="durationinminutes"
 							type="number"
 							placeholder="duration"
 							onChange={(e) => handleChange(e)}

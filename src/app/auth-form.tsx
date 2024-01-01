@@ -25,7 +25,6 @@ export default function AuthForm() {
 								colors: {
 									brand: "#2D9CDB",
 									brandAccent: "#2D9CDB",
-
 									brandButtonText: "white",
 									dividerBackground: "#2e2e2e",
 									defaultButtonBackground: "#2e2e2e",
