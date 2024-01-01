@@ -7,6 +7,7 @@ import { toast } from "react-hot-toast";
 import { Database } from "../../../../types/supabase";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import NewWorkoutButton from "./newWorkoutButton";
+import Image from "next/image";
 
 interface Filter {
 	timeFrame: string;
@@ -213,10 +214,12 @@ export default function Cardio({ session }: { session: Session | null }) {
 							</div>
 
 							{item.image_url && (
-								<img
+								<Image
 									src={item.image_url}
 									alt="Workout"
 									className="workout-image"
+									width={200}
+									height={200}
 								/>
 							)}
 
