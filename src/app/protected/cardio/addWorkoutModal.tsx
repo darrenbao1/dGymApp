@@ -172,6 +172,7 @@ export const AddWorkoutModal: FC<ModalProps> = ({
 							name="durationinminutes"
 							type="number"
 							placeholder="duration"
+							value={workoutDetails.durationinminutes}
 							onChange={(e) => handleChange(e)}
 						/>
 						<input
@@ -183,6 +184,7 @@ export const AddWorkoutModal: FC<ModalProps> = ({
 							name="caption"
 							className="primary-input text-start p-2"
 							placeholder="caption"
+							value={workoutDetails.caption ? workoutDetails.caption : ""}
 							onChange={(e) => handleChange(e)}></textarea>
 					</div>
 				</form>
