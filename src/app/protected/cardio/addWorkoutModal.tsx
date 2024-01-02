@@ -99,23 +99,23 @@ export const AddWorkoutModal: FC<ModalProps> = ({
 		}
 	}
 
-	const handlePostClicked = () => {
-		const upsert = upsertWorkoutEntry(workoutDetails);
-		toast.promise(upsert, {
-			loading: "uploading workout",
-			success: "Workout successfully uploaded",
-			error: (err) => `${err.toString()}`,
-		});
-		upsert
-			.then(() => {
-				setWorkoutDetails(defaultWorkoutDetails);
-				refetch();
-				onClose();
-			})
-			.catch((error) => {
-				console.error("Error during workout uplaod:", error);
-			});
-	};
+	// const handlePostClicked = () => {
+	// 	const upsert = upsertWorkoutEntry(workoutDetails);
+	// 	toast.promise(upsert, {
+	// 		loading: "uploading workout",
+	// 		success: "Workout successfully uploaded",
+	// 		error: (err) => `${err.toString()}`,
+	// 	});
+	// 	upsert
+	// 		.then(() => {
+	// 			setWorkoutDetails(defaultWorkoutDetails);
+	// 			refetch();
+	// 			onClose();
+	// 		})
+	// 		.catch((error) => {
+	// 			console.error("Error during workout uplaod:", error);
+	// 		});
+	// };
 
 	return (
 		<div
@@ -133,7 +133,23 @@ export const AddWorkoutModal: FC<ModalProps> = ({
 						cancel
 					</button>
 					<button
-						onClick={handlePostClicked}
+						onClick={() => {
+							const upsert = upsertWorkoutEntry(workoutDetails);
+							toast.promise(upsert, {
+								loading: "uploading workout",
+								success: "Workout successfully uploaded",
+								error: (err) => `${err.toString()}`,
+							});
+							upsert
+								.then(() => {
+									setWorkoutDetails(defaultWorkoutDetails);
+									refetch();
+									onClose();
+								})
+								.catch((error) => {
+									console.error("Error during workout uplaod:", error);
+								});
+						}}
 						className={`text-s primary-button float-right`}>
 						post
 					</button>
