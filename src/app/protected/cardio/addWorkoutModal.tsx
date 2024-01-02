@@ -74,6 +74,7 @@ export const AddWorkoutModal: FC<ModalProps> = ({
 			try {
 				const imageUrl = await UploadImageBase64(image, userId).catch(
 					(error) => {
+						console.log(error);
 						throw Error(error);
 					}
 				);
@@ -90,6 +91,7 @@ export const AddWorkoutModal: FC<ModalProps> = ({
 				});
 				if (error) throw error;
 			} catch (error) {
+				console.log(error);
 				throw Error("Error saving workout data");
 			}
 		} else {
